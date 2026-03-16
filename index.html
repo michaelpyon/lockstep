@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lockstep - Rhythm Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen">
+            <h1>LOCKSTEP</h1>
+            <p class="subtitle">March to the beat!</p>
+            <div class="instructions">
+                <p>Press <kbd>SPACE</kbd> to step on the beat</p>
+                <p>Listen for the cue to switch to off-beat!</p>
+            </div>
+            <button id="start-btn" onclick="game.start()">START</button>
+            <p class="hint">Click start, then press Space to the rhythm</p>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="hidden">
+            <div id="bg-layer"></div>
+
+            <div id="hud">
+                <div id="score-display">Score: <span id="score">0</span></div>
+                <div id="combo-display">Combo: <span id="combo">0</span></div>
+            </div>
+
+            <div id="beat-indicator">
+                <div id="beat-dot"></div>
+            </div>
+
+            <!-- Marcher field - built by JS -->
+            <div id="march-field"></div>
+
+            <div id="feedback"></div>
+            <div id="countdown" class="hidden"></div>
+            <div id="mode-indicator">ON-BEAT</div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden">
+            <h1>RESULTS</h1>
+            <div id="results-stats">
+                <p>Score: <span id="final-score">0</span></p>
+                <p>Max Combo: <span id="max-combo">0</span></p>
+                <p>Perfect: <span id="perfect-count">0</span></p>
+                <p>Good: <span id="good-count">0</span></p>
+                <p>Miss: <span id="miss-count">0</span></p>
+            </div>
+            <div id="rank"></div>
+            <button onclick="game.backToTitle()">RETRY</button>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

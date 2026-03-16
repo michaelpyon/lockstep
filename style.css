@@ -1,0 +1,437 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #0a0a1a;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#game-container {
+    width: 800px;
+    height: 600px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #1a1a4e;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ============ START SCREEN ============ */
+#start-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: linear-gradient(180deg, #1a1a4e 0%, #2a2a6e 100%);
+}
+
+#start-screen h1 {
+    font-size: 72px;
+    letter-spacing: 12px;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(100, 150, 255, 0.6);
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    font-size: 18px;
+    color: #8888cc;
+    margin-bottom: 40px;
+}
+
+.instructions {
+    margin-bottom: 30px;
+    text-align: center;
+    line-height: 2;
+}
+
+.instructions p {
+    color: #aaaadd;
+    font-size: 14px;
+}
+
+kbd {
+    background: #333366;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid #555588;
+    font-family: monospace;
+    font-size: 14px;
+}
+
+#start-btn {
+    background: #4444aa;
+    color: white;
+    border: none;
+    padding: 15px 60px;
+    font-size: 24px;
+    letter-spacing: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#start-btn:hover {
+    background: #5555cc;
+    transform: scale(1.05);
+}
+
+.hint {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #666699;
+}
+
+/* ============ GAME SCREEN ============ */
+#game-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+/* Background - this is the big Lockstep color field */
+#bg-layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    transition: background-color 0.25s ease;
+    background-color: #2a2a6e;
+}
+
+/* HUD */
+#hud {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 10;
+    font-size: 16px;
+}
+
+#score-display, #combo-display {
+    background: rgba(0,0,0,0.3);
+    padding: 4px 14px;
+    border-radius: 16px;
+}
+
+/* Beat indicator bar at top */
+#beat-indicator {
+    position: absolute;
+    top: 45px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 4px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+    z-index: 10;
+}
+
+#beat-dot {
+    width: 14px;
+    height: 14px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: -5px;
+    left: 92px;
+    box-shadow: 0 0 8px rgba(255,255,255,0.5);
+}
+
+/* ============ MARCHER FIELD ============ */
+#march-field {
+    position: absolute;
+    bottom: 40px;
+    width: 100%;
+    z-index: 5;
+}
+
+.marcher-row {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 4px;
+}
+
+/* Perspective scaling for rows */
+.row-back   { transform: scale(0.55); opacity: 0.45; margin-bottom: -10px; }
+.row-mid1   { transform: scale(0.68); opacity: 0.58; margin-bottom: -6px; }
+.row-mid2   { transform: scale(0.82); opacity: 0.75; margin-bottom: -2px; }
+.row-front  { transform: scale(1);    opacity: 1; }
+
+/* ============ INDIVIDUAL MARCHER (drawn with divs) ============ */
+.marcher {
+    width: 52px;
+    height: 80px;
+    position: relative;
+    /* transform-origin at feet */
+    transform-origin: center bottom;
+}
+
+/* Head */
+.marcher .head {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--npc-head, #7070bb);
+    transition: background 0.4s;
+}
+.marcher.player .head {
+    background: var(--player-head, #dd7070);
+}
+
+/* Body */
+.marcher .body {
+    position: absolute;
+    top: 18px; left: 50%;
+    transform: translateX(-50%);
+    width: 28px; height: 32px;
+    border-radius: 5px 5px 2px 2px;
+    background: var(--npc-body, #4a4a9a);
+    transition: background 0.4s;
+}
+.marcher.player .body {
+    background: var(--player-body, #bb4444);
+}
+
+/* Arms */
+.marcher .arm-left,
+.marcher .arm-right {
+    position: absolute;
+    top: 22px;
+    width: 8px; height: 24px;
+    border-radius: 4px;
+    background: var(--npc-arm, #5a5aaa);
+    transform-origin: top center;
+    transition: background 0.4s;
+}
+.marcher .arm-left  { left: 4px; }
+.marcher .arm-right { right: 4px; }
+
+.marcher.player .arm-left,
+.marcher.player .arm-right {
+    background: var(--player-arm, #cc5555);
+}
+
+/* Legs */
+.marcher .leg-left,
+.marcher .leg-right {
+    position: absolute;
+    bottom: 0;
+    width: 10px; height: 22px;
+    border-radius: 3px;
+    background: var(--npc-leg, #3a3a7a);
+    transform-origin: top center;
+    transition: transform 0.12s ease-out, background 0.4s;
+}
+.marcher .leg-left  { left: 12px; }
+.marcher .leg-right { right: 12px; }
+
+.marcher.player .leg-left,
+.marcher.player .leg-right {
+    background: var(--player-leg, #993333);
+}
+
+/* ============ COUNTDOWN OVERLAY ============ */
+#countdown {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 30;
+    font-size: 80px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.8);
+    text-shadow: 0 0 30px rgba(255,255,255,0.4);
+    pointer-events: none;
+}
+
+#countdown.hidden { display: none; }
+
+#countdown span {
+    animation: countPop 0.45s ease-out;
+}
+
+@keyframes countPop {
+    0%   { transform: scale(2); opacity: 0; }
+    30%  { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* ============ STEP ANIMATIONS ============ */
+/* Left step: left leg forward (rotated), right leg back, slight body bounce */
+.marcher.step-left .leg-left {
+    transform: rotate(-20deg);
+}
+.marcher.step-left .leg-right {
+    transform: rotate(12deg);
+}
+.marcher.step-left .arm-left {
+    transform: rotate(15deg);
+}
+.marcher.step-left .arm-right {
+    transform: rotate(-15deg);
+}
+.marcher.step-left {
+    animation: bounce 0.13s ease-out;
+}
+
+/* Right step: right leg forward, left leg back */
+.marcher.step-right .leg-right {
+    transform: rotate(-20deg);
+}
+.marcher.step-right .leg-left {
+    transform: rotate(12deg);
+}
+.marcher.step-right .arm-right {
+    transform: rotate(15deg);
+}
+.marcher.step-right .arm-left {
+    transform: rotate(-15deg);
+}
+.marcher.step-right {
+    animation: bounce 0.13s ease-out;
+}
+
+@keyframes bounce {
+    0%   { transform: translateY(0); }
+    40%  { transform: translateY(-8px); }
+    100% { transform: translateY(0); }
+}
+
+/* Idle - legs straight */
+.marcher.idle .leg-left,
+.marcher.idle .leg-right {
+    transform: rotate(0deg);
+}
+.marcher.idle .arm-left,
+.marcher.idle .arm-right {
+    transform: rotate(0deg);
+}
+
+/* Miss wobble on player */
+.marcher.miss-wobble {
+    animation: missWobble 0.35s ease-out;
+}
+
+@keyframes missWobble {
+    0%   { transform: rotate(0); }
+    20%  { transform: rotate(-6deg); }
+    40%  { transform: rotate(6deg); }
+    60%  { transform: rotate(-3deg); }
+    80%  { transform: rotate(3deg); }
+    100% { transform: rotate(0); }
+}
+
+/* ============ FEEDBACK ============ */
+#feedback {
+    position: absolute;
+    bottom: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    font-size: 30px;
+    font-weight: bold;
+    pointer-events: none;
+    opacity: 0;
+}
+
+#feedback.show {
+    animation: feedbackAnim 0.5s ease-out forwards;
+}
+
+#feedback.perfect { color: #ffdd44; text-shadow: 0 0 15px rgba(255,220,60,0.6); }
+#feedback.good    { color: #44ddff; text-shadow: 0 0 15px rgba(60,220,255,0.6); }
+#feedback.miss    { color: #ff5555; text-shadow: 0 0 15px rgba(255,80,80,0.6); }
+
+@keyframes feedbackAnim {
+    0%   { opacity: 0; transform: translateX(-50%) translateY(0) scale(0.6); }
+    20%  { opacity: 1; transform: translateX(-50%) translateY(-10px) scale(1.15); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-30px) scale(1); }
+}
+
+/* ============ MODE INDICATOR ============ */
+#mode-indicator {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.35);
+}
+
+/* ============ RESULTS SCREEN ============ */
+#results-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    background: linear-gradient(180deg, #1a1a4e 0%, #2a2a6e 100%);
+}
+
+#results-screen h1 {
+    font-size: 48px;
+    letter-spacing: 8px;
+    margin-bottom: 30px;
+    text-shadow: 0 0 20px rgba(100, 150, 255, 0.5);
+}
+
+#results-stats {
+    text-align: center;
+    line-height: 2.2;
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+#results-stats span {
+    color: #aaddff;
+    font-weight: bold;
+}
+
+#rank {
+    font-size: 48px;
+    margin: 10px 0 30px;
+    font-weight: bold;
+    text-shadow: 0 0 20px rgba(255,255,100,0.4);
+}
+
+#results-screen button {
+    background: #4444aa;
+    color: white;
+    border: none;
+    padding: 12px 50px;
+    font-size: 20px;
+    letter-spacing: 3px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#results-screen button:hover {
+    background: #5555cc;
+    transform: scale(1.05);
+}
