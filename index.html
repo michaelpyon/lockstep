@@ -3,10 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lockstep - Rhythm Game</title>
+    <title>Lockstep - March to the Beat</title>
+    <meta name="description" content="A Rhythm Heaven-inspired marching game. Press Space on the beat, switch between on-beat and off-beat patterns. How high can you score?">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Lockstep - March to the Beat">
+    <meta property="og:description" content="A Rhythm Heaven-inspired marching game. Press Space on the beat, switch between on-beat and off-beat patterns.">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Lockstep - March to the Beat">
+    <meta name="twitter:description" content="A Rhythm Heaven-inspired marching game. Press Space on the beat, switch between on-beat and off-beat patterns.">
+    <meta name="twitter:creator" content="@michaelpyon">
+    <meta name="theme-color" content="#1a1a4e">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
     <link rel="stylesheet" href="style.css">
+    <style>
+      .mobile-gate {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: linear-gradient(180deg, #1a1a4e 0%, #2a2a6e 100%);
+        color: #fff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        padding: 2rem;
+        text-align: center;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      .mobile-gate h1 { font-size: 2rem; font-weight: bold; letter-spacing: 6px; text-shadow: 0 0 30px rgba(100, 150, 255, 0.6); margin: 0; }
+      .mobile-gate .mobile-subtitle { font-size: 0.9rem; color: #8888cc; }
+      .mobile-gate p { font-size: 0.9rem; color: #aaaadd; max-width: 320px; line-height: 1.6; margin: 0 auto; }
+      .mobile-gate .mobile-emoji { font-size: 3rem; }
+      .mobile-gate button { width: 100%; max-width: 320px; min-height: 48px; background: #4444aa; color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; letter-spacing: 2px; }
+      @media (max-width: 768px) {
+        .mobile-gate { display: flex; }
+        #game-container { display: none !important; }
+      }
+    </style>
 </head>
 <body>
+    <!-- Mobile Gate -->
+    <div class="mobile-gate">
+        <h1>LOCKSTEP</h1>
+        <div class="mobile-subtitle">March to the beat!</div>
+        <div class="mobile-emoji">🎵</div>
+        <p>A Rhythm Heaven-inspired marching game. Press Space on the beat, then switch to off-beat when the cue plays.</p>
+        <p>This game requires a keyboard. Your marchers need a spacebar, not a touchscreen.</p>
+        <button onclick="navigator.clipboard.writeText(window.location.href).then(function() { this.textContent = 'Link copied!'; }.bind(this))">Copy Link for Desktop</button>
+    </div>
+
     <div id="game-container">
         <!-- Start Screen -->
         <div id="start-screen">
