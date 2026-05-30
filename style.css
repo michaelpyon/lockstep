@@ -435,3 +435,32 @@ kbd {
     background: #5555cc;
     transform: scale(1.05);
 }
+
+/* Share buttons */
+#share-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+#results-screen .share-btn {
+    background: rgba(255, 255, 255, 0.08);
+    color: #aaddff;
+    border: 1px solid #4444aa;
+    padding: 12px 24px;
+    min-height: 44px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+#results-screen .share-btn:hover {
+    background: rgba(68, 68, 170, 0.5);
+    border-color: #5555cc;
+    color: #fff;
+    transform: scale(1.05);
+}

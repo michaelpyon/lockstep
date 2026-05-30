@@ -103,6 +103,10 @@
                 <p>Miss: <span id="miss-count">0</span></p>
             </div>
             <div id="rank"></div>
+            <div id="share-row">
+                <button id="share-copy-btn" class="share-btn" onclick="game.shareScore('copy', this)">Copy Score</button>
+                <button id="share-tweet-btn" class="share-btn" onclick="game.shareScore('tweet', this)">Tweet</button>
+            </div>
             <button onclick="game.backToTitle()">RETRY</button>
         </div>
     </div>

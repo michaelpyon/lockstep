@@ -138,6 +138,7 @@ class Game {
         this.perfectCount = 0;
         this.goodCount = 0;
         this.missCount = 0;
+        this.lastRank = '';
 
         // Timing
         this.beatDur = 60 / CONFIG.BPM;
@@ -622,6 +623,36 @@ class Game {
         else if (hitRate > 0.7) rank = 'OK';
 
         document.getElementById('rank').textContent = rank;
+        this.lastRank = rank;
+    }
+
+    // ---- Share score ----
+    shareScore(mode, btn) {
+        const SHARE_URL = 'lockstep-eight.vercel.app';
+        const rank = this.lastRank || 'Played';
+        const score = Math.floor(this.score);
+        const text = `${rank} on Lockstep — ${SHARE_URL}`;
+
+        if (mode === 'tweet') {
+            const tweetText = `${rank} with ${score} points on Lockstep`;
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent('https://' + SHARE_URL)}`;
+            window.open(url, '_blank', 'noopener');
+            return;
+        }
+
+        const done = () => {
+            if (!btn) return;
+            const original = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(() => { btn.textContent = original; }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(() => {
+                window.prompt('Copy your score:', text);
+            });
+        } else {
+            window.prompt('Copy your score:', text);
+        }
     }
 
     backToTitle() {
