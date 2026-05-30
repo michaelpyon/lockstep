@@ -179,6 +179,19 @@ class Game {
         this.animId = null;
         this._fbTimeout = null;
 
+        // Challenge target from URL (?challenge=N), stored for end-of-game comparison
+        this.challengeTarget = (() => {
+            try {
+                const params = new URLSearchParams(window.location.search);
+                const raw = params.get('challenge');
+                if (raw !== null) {
+                    const n = parseInt(raw, 10);
+                    if (Number.isFinite(n) && n > 0) return n;
+                }
+            } catch (_) { /* ignore */ }
+            return null;
+        })();
+
         this.setupInput();
         this.refreshBestDisplay();
     }
@@ -263,6 +276,18 @@ class Game {
     // ---- Start game ----
     start() {
         this.audio.init();
+
+        // If the AudioContext is suspended (browser autoplay policy or tab switch),
+        // resume it and show a brief hint so the user knows audio is needed.
+        if (this.audio.ctx && this.audio.ctx.state === 'suspended') {
+            this.audio.ctx.resume().then(() => {
+                const hint = document.getElementById('audio-resume-hint');
+                if (hint) hint.classList.add('hidden');
+            });
+            const hint = document.getElementById('audio-resume-hint');
+            if (hint) hint.classList.remove('hidden');
+        }
+
         this.chart = createChart();
         this.beatDur = 60 / CONFIG.BPM;
         this.halfBeat = this.beatDur / 2;
@@ -641,6 +666,24 @@ class Game {
             }
         } catch (_) {
             // localStorage unavailable (private mode); continue silently
+        }
+
+        // Challenge comparison: show result when a ?challenge=N link was used
+        const challengeEl = document.getElementById('challenge-result');
+        if (challengeEl) {
+            if (this.challengeTarget !== null) {
+                const diff = finalScore - this.challengeTarget;
+                if (diff >= 0) {
+                    challengeEl.textContent = 'You beat the challenge by ' + diff.toLocaleString() + ' pts!';
+                    challengeEl.className = 'challenge-result beat';
+                } else {
+                    challengeEl.textContent = 'You missed the challenge by ' + Math.abs(diff).toLocaleString() + ' pts.';
+                    challengeEl.className = 'challenge-result missed';
+                }
+                challengeEl.classList.remove('hidden');
+            } else {
+                challengeEl.classList.add('hidden');
+            }
         }
     }
 

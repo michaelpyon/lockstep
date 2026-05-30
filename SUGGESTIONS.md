@@ -47,21 +47,18 @@ The ideal evangelist is a Rhythm Heaven fan in their 20s-30s who hangs out in r/
    - Why it matters: gives the evangelist a reason to retry, closes the "how do I know I improved?" loop without needing a server.
    - Deploy needed: yes, but no new infra.
 
-2. **Verify and fix canonical URL**
-   - If the live canonical is lockstep.vercel.app, update `og:url` in index.html and `BASE_URL` in shareScore().
-   - File: index.html, game.js (1 line each).
-   - Effort: S.
-   - Wait until deploy alias is confirmed.
+2. **Verify and fix canonical URL** (CONFIRMED CORRECT, no change needed)
+   - Curled lockstep-eight.vercel.app (200) and lockstep.vercel.app (401) with Twitterbot UA.
+   - lockstep-eight.vercel.app is the live host. og:url and BASE_URL already point there. No fix required.
 
-3. **High score in challenge banner comparison**
-   - When a challenge param is present, compare the player's final score to the challenge target and show "You beat it!" or "You missed by N pts" on results screen.
-   - Files: game.js, index.html (~15 lines).
-   - Effort: S.
+3. **High score in challenge banner comparison** (DONE WAVE 2)
+   - When a challenge param is present, compare the player's final score to the challenge target and show "You beat the challenge by N pts!" or "You missed the challenge by N pts." on results screen.
+   - Files: game.js, index.html, style.css.
    - Why: closes the viral loop the challenge link opens.
 
-4. **AudioContext resume hint**
-   - If `this.audio.ctx.state === 'suspended'` at game start, show a small "tap or click to unmute" hint.
-   - File: game.js (~8 lines).
+4. **AudioContext resume hint** (DONE WAVE 2)
+   - If `this.audio.ctx.state === 'suspended'` at game start, resume and show a brief animated "Click anywhere to unmute" pill.
+   - File: game.js, index.html, style.css.
    - Effort: S.
 
 ### Medium Wins (effort M, more logic)
@@ -90,8 +87,19 @@ The ideal evangelist is a Rhythm Heaven fan in their 20s-30s who hangs out in r/
 
 ---
 
-## This Pass
+## Wave 1 (2026-05-30)
 
 Implemented: personal best tracking (localStorage). Files changed: game.js, index.html, style.css.
 Build: static, no build script. Syntax verified with `node --check game.js`.
 Flagged: deploy mismatch (lockstep-eight.vercel.app still serves old build; needs a Vercel deploy flush).
+
+## Wave 2 (2026-05-30)
+
+Confirmed: lockstep-eight.vercel.app is the live canonical host (HTTP 200 with Twitterbot UA). lockstep.vercel.app returns 401. All meta/share URLs were already correct. No URL fix needed.
+
+Implemented:
+- Challenge result comparison on results screen: when arriving via a ?challenge=N link, the results screen now shows "You beat the challenge by N pts!" (green) or "You missed the challenge by N pts." (orange). Closes the viral share loop.
+- AudioContext resume hint: if the browser suspends the AudioContext on game start (autoplay policy or tab switch), a brief animated "Click anywhere to unmute" pill appears and auto-fades. Fixes the silent-game bounce case.
+
+Files changed: game.js, index.html, style.css.
+Build: static, no build script. Syntax verified with `node --check game.js`.
