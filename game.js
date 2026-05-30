@@ -628,14 +628,14 @@ class Game {
 
     // ---- Share score ----
     shareScore(mode, btn) {
-        const SHARE_URL = 'lockstep-eight.vercel.app';
+        const BASE_URL = 'https://lockstep-eight.vercel.app';
         const rank = this.lastRank || 'Played';
         const score = Math.floor(this.score);
-        const text = `${rank} | ${score} pts (${this.maxCombo}x combo) on Lockstep - https://${SHARE_URL}`;
+        const challengeURL = `${BASE_URL}/?challenge=${score}`;
+        const text = `${rank} on Lockstep: ${score} pts, ${this.maxCombo}x combo. Beat my score: ${challengeURL}`;
 
         if (mode === 'tweet') {
-            const tweetText = `${rank} with ${score} points on Lockstep`;
-            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}&url=${encodeURIComponent('https://' + SHARE_URL)}`;
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
             window.open(url, '_blank', 'noopener');
             return;
         }
@@ -665,3 +665,23 @@ class Game {
 
 // ============================================================
 const game = new Game();
+
+// Challenge link: parse ?challenge=N on load and show target on start screen
+(function () {
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const raw = params.get('challenge');
+        if (raw !== null) {
+            const n = parseInt(raw, 10);
+            if (Number.isFinite(n) && n > 0) {
+                const banner = document.getElementById('challenge-banner');
+                if (banner) {
+                    banner.textContent = 'Beat this score: ' + n.toLocaleString();
+                    banner.classList.remove('hidden');
+                }
+            }
+        }
+    } catch (_) {
+        // Malformed URL params are ignored; normal start proceeds
+    }
+}());
