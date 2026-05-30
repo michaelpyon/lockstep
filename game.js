@@ -631,7 +631,7 @@ class Game {
         const SHARE_URL = 'lockstep-eight.vercel.app';
         const rank = this.lastRank || 'Played';
         const score = Math.floor(this.score);
-        const text = `${rank} on Lockstep — ${SHARE_URL}`;
+        const text = `${rank} on Lockstep - ${SHARE_URL}`;
 
         if (mode === 'tweet') {
             const tweetText = `${rank} with ${score} points on Lockstep`;
