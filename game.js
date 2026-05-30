@@ -180,6 +180,7 @@ class Game {
         this._fbTimeout = null;
 
         this.setupInput();
+        this.refreshBestDisplay();
     }
 
     buildMarchers() {
@@ -624,6 +625,23 @@ class Game {
 
         document.getElementById('rank').textContent = rank;
         this.lastRank = rank;
+
+        // Personal best tracking
+        const finalScore = Math.floor(this.score);
+        const newBestEl = document.getElementById('new-best');
+        if (newBestEl) newBestEl.classList.add('hidden');
+        try {
+            const stored = parseInt(localStorage.getItem('lockstep_best') || '0', 10);
+            if (finalScore > stored) {
+                localStorage.setItem('lockstep_best', String(finalScore));
+                if (newBestEl) {
+                    newBestEl.textContent = 'NEW BEST: ' + finalScore.toLocaleString() + ' pts';
+                    newBestEl.classList.remove('hidden');
+                }
+            }
+        } catch (_) {
+            // localStorage unavailable (private mode); continue silently
+        }
     }
 
     // ---- Share score ----
@@ -660,6 +678,23 @@ class Game {
         document.getElementById('results-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.add('hidden');
         document.getElementById('start-screen').classList.remove('hidden');
+        this.refreshBestDisplay();
+    }
+
+    refreshBestDisplay() {
+        const el = document.getElementById('best-score-display');
+        if (!el) return;
+        try {
+            const stored = parseInt(localStorage.getItem('lockstep_best') || '0', 10);
+            if (stored > 0) {
+                el.textContent = 'BEST: ' + stored.toLocaleString() + ' pts';
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        } catch (_) {
+            el.classList.add('hidden');
+        }
     }
 }
 

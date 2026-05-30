@@ -81,6 +81,7 @@
                 <p>Listen for the cue to switch to off-beat!</p>
             </div>
             <button id="start-btn" onclick="game.start()">START</button>
+            <div id="best-score-display" class="hidden"></div>
             <p class="hint">Click start, then press Space to the rhythm</p>
         </div>
 
@@ -116,6 +117,7 @@
                 <p>Miss: <span id="miss-count">0</span></p>
             </div>
             <div id="rank"></div>
+            <div id="new-best" class="hidden"></div>
             <div id="share-row">
                 <button id="share-copy-btn" class="share-btn" onclick="game.shareScore('copy', this)">Copy Score</button>
                 <button id="share-tweet-btn" class="share-btn" onclick="game.shareScore('tweet', this)">Tweet</button>

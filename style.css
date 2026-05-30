@@ -436,6 +436,35 @@ kbd {
     transform: scale(1.05);
 }
 
+/* New best banner on results screen */
+#new-best {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffdd44;
+    letter-spacing: 3px;
+    text-shadow: 0 0 12px rgba(255, 220, 60, 0.6);
+    margin-bottom: 10px;
+}
+
+#new-best:not(.hidden) {
+    animation: newBestPop 0.5s ease-out;
+}
+
+@keyframes newBestPop {
+    0%   { transform: scale(0.7); opacity: 0; }
+    60%  { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* Personal best on start screen */
+#best-score-display {
+    font-size: 13px;
+    color: #7799dd;
+    letter-spacing: 2px;
+    margin-top: -12px;
+    margin-bottom: 8px;
+}
+
 /* Share buttons */
 #share-row {
     display: flex;
