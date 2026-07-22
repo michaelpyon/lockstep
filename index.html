@@ -3,130 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lockstep: March to the Beat</title>
-    <meta name="description" content="A Rhythm Heaven-inspired marching game. Press Space on the beat, switch between on-beat and off-beat patterns. How high can you score?">
+    <title>Lockstep | A 1-Key Rhythm Challenge</title>
+    <meta name="description" content="1 key. 138 beats. March on-beat, switch off-beat on the cue, and dare a friend to top your score.">
+    <link rel="canonical" href="https://lockstep-eight.vercel.app/">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Lockstep: March to the Beat">
-    <meta property="og:description" content="A Rhythm Heaven-inspired marching game. Press Space on the beat, switch between on-beat and off-beat patterns.">
-    <meta property="og:url" content="https://lockstep-eight.vercel.app">
+    <meta property="og:site_name" content="Lockstep">
+    <meta property="og:title" content="Lockstep | Don't Lose the Beat">
+    <meta property="og:description" content="A 1-minute, 1-key rhythm challenge. Switch to the off-beat when the cue hits.">
+    <meta property="og:url" content="https://lockstep-eight.vercel.app/">
     <meta property="og:image" content="https://lockstep-eight.vercel.app/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Lockstep title card split between indigo on-beat and magenta off-beat fields, with a row of marching figures.">
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Lockstep: March to the Beat">
-    <meta name="twitter:description" content="A Rhythm Heaven-inspired marching game. Press Space on the beat, switch between on-beat and off-beat patterns.">
+    <meta name="twitter:title" content="Lockstep | Don't Lose the Beat">
+    <meta name="twitter:description" content="A 1-minute, 1-key rhythm challenge. Switch to the off-beat when the cue hits.">
     <meta name="twitter:image" content="https://lockstep-eight.vercel.app/og-image.png">
+    <meta name="twitter:image:alt" content="Lockstep title card split between indigo on-beat and magenta off-beat fields, with a row of marching figures.">
     <meta name="twitter:creator" content="@michaelpyon">
-    <meta name="theme-color" content="#1a1a4e">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+    <meta name="theme-color" content="#26245f">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="style.css">
-    <style>
-      .mobile-gate {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 9999;
-        background: linear-gradient(180deg, #1a1a4e 0%, #2a2a6e 100%);
-        color: #fff;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        padding: 2rem;
-        text-align: center;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 1.5rem;
-      }
-      .mobile-gate h1 { font-size: 2rem; font-weight: bold; letter-spacing: 6px; text-shadow: 0 0 30px rgba(100, 150, 255, 0.6); margin: 0; }
-      .mobile-gate .mobile-subtitle { font-size: 0.9rem; color: #8888cc; }
-      .mobile-gate p { font-size: 0.9rem; color: #aaaadd; max-width: 320px; line-height: 1.6; margin: 0 auto; }
-      .mobile-gate .mobile-emoji { font-size: 3rem; }
-      .mobile-gate button { width: 100%; max-width: 320px; min-height: 48px; background: #4444aa; color: white; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; letter-spacing: 2px; }
-      @media (max-width: 768px) {
-        .mobile-gate { display: flex; }
-        #game-container { display: none !important; }
-      }
-      #challenge-banner {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #ffdd55;
-        letter-spacing: 2px;
-        background: rgba(255, 221, 85, 0.12);
-        border: 1px solid rgba(255, 221, 85, 0.35);
-        border-radius: 6px;
-        padding: 0.45rem 1.1rem;
-        margin: 0.5rem auto 0.2rem;
-        display: inline-block;
-      }
-    </style>
 </head>
 <body>
-    <!-- Mobile Gate -->
-    <div class="mobile-gate">
-        <h1>LOCKSTEP</h1>
-        <div class="mobile-subtitle">March to the beat!</div>
-        <div class="mobile-emoji">🎵</div>
-        <p>A Rhythm Heaven-inspired marching game. Press Space on the beat, then switch to off-beat when the cue plays.</p>
-        <p>This game requires a keyboard. Your marchers need a spacebar, not a touchscreen.</p>
-        <button onclick="navigator.clipboard.writeText(window.location.href).then(function() { this.textContent = 'Link copied!'; }.bind(this))">Copy Link for Desktop</button>
+    <div class="mobile-gate" role="dialog" aria-labelledby="mobile-title" aria-describedby="mobile-description">
+        <svg class="marcher-mark" viewBox="0 0 72 96" aria-hidden="true">
+            <circle cx="36" cy="14" r="12"></circle>
+            <path d="M20 29h32v31H20zM20 35 7 59l10 6 12-22M52 35l13 24-10 6-12-22M24 58l-8 31h12l8-23 8 23h12l-8-31z"></path>
+        </svg>
+        <p class="mobile-kicker">DESKTOP DRILL</p>
+        <h1 id="mobile-title">LOCKSTEP</h1>
+        <p id="mobile-description">This rhythm test needs a keyboard and precise Space bar timing. Send the link to your desktop, then march.</p>
+        <button id="mobile-copy-btn" type="button">Copy desktop link</button>
     </div>
 
-    <div id="game-container">
-        <!-- Start Screen -->
-        <div id="start-screen">
-            <h1>LOCKSTEP</h1>
-            <p class="subtitle">March to the beat!</p>
-            <div id="challenge-banner" class="hidden"></div>
-            <div class="instructions">
-                <p>Press <kbd>SPACE</kbd> to step on the beat</p>
-                <p>Listen for the cue to switch to off-beat!</p>
+    <main id="game-container" data-mode="on">
+        <section id="start-screen" aria-labelledby="game-title">
+            <div class="start-copy">
+                <p class="eyebrow"><span aria-hidden="true"></span> 128 BPM / 138 BEATS</p>
+                <h1 id="game-title" class="wordmark" aria-label="Lockstep">
+                    <span aria-hidden="true">L</span><span aria-hidden="true">O</span><span aria-hidden="true">C</span><span aria-hidden="true">K</span><span aria-hidden="true">S</span><span aria-hidden="true">T</span><span aria-hidden="true">E</span><span aria-hidden="true">P</span>
+                </h1>
+                <p class="subtitle">1 key. 138 beats. Don't lose the switch.</p>
+                <div id="challenge-banner" class="hidden" role="status"></div>
+                <div class="instructions">
+                    <p>Press <kbd>SPACE</kbd> on the beat.</p>
+                    <p>When the cue plays, switch to the off-beat.</p>
+                </div>
+                <div class="start-actions">
+                    <button id="start-btn" type="button" onclick="game.start()"><span>Start drill</span><kbd>SPACE</kbd></button>
+                    <div id="best-score-display" class="hidden"></div>
+                </div>
+                <p class="hint">Headphones help. Chrome desktop recommended.</p>
             </div>
-            <button id="start-btn" onclick="game.start()">START</button>
-            <div id="best-score-display" class="hidden"></div>
-            <p class="hint">Click start, then press Space to the rhythm</p>
-        </div>
 
-        <!-- Game Screen -->
-        <div id="game-screen" class="hidden">
+            <div class="title-formation" aria-hidden="true">
+                <div class="title-marchers">
+                    <i></i><i></i><i class="lead"></i><i></i><i></i>
+                </div>
+                <div class="formation-line"></div>
+            </div>
+        </section>
+
+        <section id="game-screen" class="hidden" aria-label="Lockstep rhythm drill">
             <div id="bg-layer"></div>
 
             <div id="hud">
-                <div id="score-display">Score: <span id="score">0</span></div>
-                <div id="combo-display">Combo: <span id="combo">0</span></div>
+                <div id="score-display"><span class="hud-label">Score</span><span id="score">0</span></div>
+                <div id="combo-display"><span class="hud-label">Combo</span><span id="combo">0</span></div>
             </div>
 
-            <div id="beat-indicator">
+            <div id="beat-indicator" aria-hidden="true">
                 <div id="beat-dot"></div>
             </div>
 
-            <!-- Marcher field - built by JS -->
-            <div id="march-field"></div>
+            <div id="march-field" aria-hidden="true"></div>
 
-            <div id="audio-resume-hint" class="hidden">Click anywhere to unmute</div>
-            <div id="feedback"></div>
-            <div id="countdown" class="hidden"></div>
+            <button id="audio-resume-hint" class="hidden" type="button" onclick="game.resumeAudio()">Sound paused. Resume audio</button>
+            <div id="feedback" aria-live="polite"></div>
+            <div id="countdown" class="hidden" aria-live="assertive"></div>
             <div id="mode-indicator">ON-BEAT</div>
-        </div>
+        </section>
 
-        <!-- Results Screen -->
-        <div id="results-screen" class="hidden">
-            <h1>RESULTS</h1>
-            <div id="results-stats">
-                <p>Score: <span id="final-score">0</span></p>
-                <p>Max Combo: <span id="max-combo">0</span></p>
-                <p>Perfect: <span id="perfect-count">0</span></p>
-                <p>Good: <span id="good-count">0</span></p>
-                <p>Miss: <span id="miss-count">0</span></p>
+        <section id="results-screen" class="hidden" aria-labelledby="rank">
+            <div class="results-copy">
+                <p class="eyebrow"><span aria-hidden="true"></span> DRILL COMPLETE</p>
+                <h1 id="rank">Try Again</h1>
+                <div class="result-score"><span id="final-score">0</span><small>points</small></div>
+                <div id="results-stats">
+                    <p><span id="max-combo">0</span><small>max combo</small></p>
+                    <p><span id="perfect-count">0</span><small>perfect</small></p>
+                    <p><span id="good-count">0</span><small>good</small></p>
+                    <p><span id="miss-count">0</span><small>miss</small></p>
+                </div>
+                <div id="new-best" class="hidden"></div>
+                <div id="challenge-result" class="hidden"></div>
+                <div id="share-row">
+                    <button id="share-copy-btn" class="share-btn" type="button" onclick="game.shareScore('copy', this)">Copy score</button>
+                    <button id="share-tweet-btn" class="share-btn" type="button" onclick="game.shareScore('tweet', this)">Post to X</button>
+                    <button id="retry-btn" type="button" onclick="game.backToTitle()">Retry</button>
+                </div>
+                <p class="credit">A rhythm toy by Michael Pyon</p>
             </div>
-            <div id="rank"></div>
-            <div id="new-best" class="hidden"></div>
-            <div id="challenge-result" class="hidden"></div>
-            <div id="share-row">
-                <button id="share-copy-btn" class="share-btn" onclick="game.shareScore('copy', this)">Copy Score</button>
-                <button id="share-tweet-btn" class="share-btn" onclick="game.shareScore('tweet', this)">Tweet</button>
+
+            <div class="result-formation" aria-hidden="true">
+                <div class="result-marchers">
+                    <i></i><i></i><i class="lead"></i><i></i><i></i>
+                </div>
+                <p>KEEP THE LINE</p>
             </div>
-            <button onclick="game.backToTitle()">RETRY</button>
-        </div>
-    </div>
+        </section>
+    </main>
 
     <script src="game.js"></script>
 </body>

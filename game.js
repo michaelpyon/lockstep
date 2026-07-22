@@ -25,6 +25,7 @@ class AudioEngine {
     }
 
     init() {
+        if (this.ctx && this.ctx.state !== 'closed') return;
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
         this.masterGain = this.ctx.createGain();
         this.masterGain.gain.value = 0.35;
@@ -178,6 +179,8 @@ class Game {
 
         this.animId = null;
         this._fbTimeout = null;
+        this._audioStateBound = false;
+        this._buttonTimers = new WeakMap();
 
         // Challenge target from URL (?challenge=N), stored for end-of-game comparison
         this.challengeTarget = (() => {
@@ -241,52 +244,82 @@ class Game {
     setupInput() {
         document.addEventListener('keydown', (e) => {
             if (e.repeat) return;
-            if (e.code === 'Space' && this.state === 'playing') {
+            if (e.code !== 'Space') return;
+
+            if (this.audio.ctx && this.audio.ctx.state === 'suspended') {
+                this.resumeAudio();
+            }
+
+            if (this.state === 'title' && !window.matchMedia('(max-width: 768px)').matches) {
+                e.preventDefault();
+                this.start();
+            } else if (this.state === 'playing') {
                 e.preventDefault();
                 this.onPlayerInput();
             }
+        });
+
+        const mobileCopyButton = document.getElementById('mobile-copy-btn');
+        if (mobileCopyButton) {
+            mobileCopyButton.addEventListener('click', () => this.copyDesktopLink(mobileCopyButton));
+        }
+    }
+
+    bindAudioState() {
+        if (!this.audio.ctx || this._audioStateBound) return;
+        this._audioStateBound = true;
+        this.audio.ctx.addEventListener('statechange', () => {
+            const hint = document.getElementById('audio-resume-hint');
+            if (!hint) return;
+            const needsResume = this.audio.ctx.state === 'suspended' && (this.state === 'countdown' || this.state === 'playing');
+            hint.classList.toggle('hidden', !needsResume);
+        });
+    }
+
+    resumeAudio() {
+        const hint = document.getElementById('audio-resume-hint');
+        if (!this.audio.ctx || this.audio.ctx.state !== 'suspended') {
+            if (hint) hint.classList.add('hidden');
+            return Promise.resolve();
+        }
+
+        return this.audio.ctx.resume().then(() => {
+            if (hint) hint.classList.add('hidden');
+        }).catch(() => {
+            if (hint) hint.classList.remove('hidden');
         });
     }
 
     // ---- Color themes for on-beat / off-beat ----
     setColorTheme(mode) {
         const container = document.getElementById('game-container');
+        container.dataset.mode = mode;
         if (mode === 'on') {
-            container.style.setProperty('--npc-head', '#7070bb');
-            container.style.setProperty('--npc-body', '#4a4a9a');
-            container.style.setProperty('--npc-arm', '#5a5aaa');
-            container.style.setProperty('--npc-leg', '#3a3a7a');
-            container.style.setProperty('--player-head', '#dd7070');
-            container.style.setProperty('--player-body', '#bb4444');
-            container.style.setProperty('--player-arm', '#cc5555');
-            container.style.setProperty('--player-leg', '#993333');
+            container.style.setProperty('--npc-head', '#a5a6d8');
+            container.style.setProperty('--npc-body', '#7779bd');
+            container.style.setProperty('--npc-arm', '#8e90ca');
+            container.style.setProperty('--npc-leg', '#5c5da2');
+            container.style.setProperty('--player-head', '#f7d96f');
+            container.style.setProperty('--player-body', '#e8b846');
+            container.style.setProperty('--player-arm', '#e8b846');
+            container.style.setProperty('--player-leg', '#bb8328');
         } else {
-            // Off-beat: NPCs become pinkish/warm, player stays distinct
-            container.style.setProperty('--npc-head', '#bb70a0');
-            container.style.setProperty('--npc-body', '#9a4a7a');
-            container.style.setProperty('--npc-arm', '#aa5a8a');
-            container.style.setProperty('--npc-leg', '#7a3a6a');
-            container.style.setProperty('--player-head', '#ffaa66');
-            container.style.setProperty('--player-body', '#dd7733');
-            container.style.setProperty('--player-arm', '#ee8844');
-            container.style.setProperty('--player-leg', '#bb5522');
+            container.style.setProperty('--npc-head', '#f0a5b7');
+            container.style.setProperty('--npc-body', '#8d1f3c');
+            container.style.setProperty('--npc-arm', '#a92546');
+            container.style.setProperty('--npc-leg', '#6f1730');
+            container.style.setProperty('--player-head', '#f7d96f');
+            container.style.setProperty('--player-body', '#f0b93d');
+            container.style.setProperty('--player-arm', '#f0b93d');
+            container.style.setProperty('--player-leg', '#b77819');
         }
     }
 
     // ---- Start game ----
     start() {
         this.audio.init();
-
-        // If the AudioContext is suspended (browser autoplay policy or tab switch),
-        // resume it and show a brief hint so the user knows audio is needed.
-        if (this.audio.ctx && this.audio.ctx.state === 'suspended') {
-            this.audio.ctx.resume().then(() => {
-                const hint = document.getElementById('audio-resume-hint');
-                if (hint) hint.classList.add('hidden');
-            });
-            const hint = document.getElementById('audio-resume-hint');
-            if (hint) hint.classList.remove('hidden');
-        }
+        this.bindAudioState();
+        this.resumeAudio();
 
         this.chart = createChart();
         this.beatDur = 60 / CONFIG.BPM;
@@ -310,7 +343,7 @@ class Game {
         this.scoreEl.textContent = '0';
         this.comboEl.textContent = '0';
         this.modeIndicator.textContent = 'ON-BEAT';
-        this.bgLayer.style.backgroundColor = '#2a2a6e';
+        this.bgLayer.style.backgroundColor = '#26245f';
         this.setColorTheme('on');
 
         // Reset marcher poses
@@ -477,16 +510,16 @@ class Game {
         // Off-beat: pink/red tones that flash lighter on beat
         if (this.mode === 'on') {
             // Flash bright on beat, return to base
-            this.bgLayer.style.backgroundColor = '#3e3e8e';
+            this.bgLayer.style.backgroundColor = '#373581';
             setTimeout(() => {
-                if (this.mode === 'on') this.bgLayer.style.backgroundColor = '#2a2a6e';
-            }, 100);
+                if (this.mode === 'on') this.bgLayer.style.backgroundColor = '#26245f';
+            }, 117);
         } else {
-            // Off-beat mode: pink base, flash on beat
-            this.bgLayer.style.backgroundColor = '#8e3050';
+            // Off-beat mode: magenta base, brighter hit on the beat
+            this.bgLayer.style.backgroundColor = '#d74464';
             setTimeout(() => {
-                if (this.mode === 'off') this.bgLayer.style.backgroundColor = '#6e2040';
-            }, 100);
+                if (this.mode === 'off') this.bgLayer.style.backgroundColor = '#bd2e53';
+            }, 117);
         }
 
         // NPC marchers step on every beat
@@ -633,7 +666,7 @@ class Game {
         document.getElementById('game-screen').classList.add('hidden');
         document.getElementById('results-screen').classList.remove('hidden');
 
-        document.getElementById('final-score').textContent = Math.floor(this.score);
+        document.getElementById('final-score').textContent = Math.floor(this.score).toLocaleString();
         document.getElementById('max-combo').textContent = this.maxCombo;
         document.getElementById('perfect-count').textContent = this.perfectCount;
         document.getElementById('good-count').textContent = this.goodCount;
@@ -649,6 +682,7 @@ class Game {
         else if (hitRate > 0.7) rank = 'OK';
 
         document.getElementById('rank').textContent = rank;
+        document.getElementById('results-screen').dataset.rank = rank.toLowerCase().replace(/[^a-z]+/g, '-');
         this.lastRank = rank;
 
         // Personal best tracking
@@ -693,7 +727,7 @@ class Game {
         const rank = this.lastRank || 'Played';
         const score = Math.floor(this.score);
         const challengeURL = `${BASE_URL}/?challenge=${score}`;
-        const text = `${rank} on Lockstep: ${score} pts, ${this.maxCombo}x combo. Beat my score: ${challengeURL}`;
+        const text = `${rank} on Lockstep: ${score.toLocaleString()} pts, ${this.maxCombo}x combo. Beat my score: ${challengeURL}`;
 
         if (mode === 'tweet') {
             const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
@@ -703,9 +737,7 @@ class Game {
 
         const done = () => {
             if (!btn) return;
-            const original = btn.textContent;
-            btn.textContent = 'Copied';
-            setTimeout(() => { btn.textContent = original; }, 1800);
+            this.showButtonFeedback(btn, 'Copied');
         };
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(done).catch(() => {
@@ -722,6 +754,30 @@ class Game {
         document.getElementById('game-screen').classList.add('hidden');
         document.getElementById('start-screen').classList.remove('hidden');
         this.refreshBestDisplay();
+        window.setTimeout(() => document.getElementById('start-btn')?.focus(), 0);
+    }
+
+    copyDesktopLink(btn) {
+        const text = 'https://lockstep-eight.vercel.app/';
+        const done = () => this.showButtonFeedback(btn, 'Desktop link copied');
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(done).catch(() => window.prompt('Copy the desktop link:', text));
+        } else {
+            window.prompt('Copy the desktop link:', text);
+        }
+    }
+
+    showButtonFeedback(btn, message) {
+        const original = btn.dataset.defaultLabel || btn.textContent;
+        btn.dataset.defaultLabel = original;
+        btn.textContent = message;
+        window.clearTimeout(this._buttonTimers.get(btn));
+        const timer = window.setTimeout(() => {
+            btn.textContent = original;
+            this._buttonTimers.delete(btn);
+        }, 1800);
+        this._buttonTimers.set(btn, timer);
     }
 
     refreshBestDisplay() {

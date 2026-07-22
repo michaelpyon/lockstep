@@ -1,22 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1a1a4e"/>
-      <stop offset="100%" stop-color="#2a2a6e"/>
-    </linearGradient>
-    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
-      <circle cx="20" cy="20" r="1.5" fill="#4444aa" opacity="0.3"/>
-    </pattern>
+    <symbol id="marcher" viewBox="0 0 80 120">
+      <circle cx="40" cy="18" r="15"/>
+      <path d="M21 38h38v42H21zM22 43 5 75l13 7 16-30M58 43l17 32-13 7-16-30M27 78l-11 39h15l9-28 9 28h15L53 78z"/>
+    </symbol>
   </defs>
-  <rect width="1200" height="630" fill="url(#bg)"/>
-  <rect width="1200" height="630" fill="url(#dots)"/>
-  <rect x="0" y="600" width="1200" height="6" fill="#6b8eff"/>
-  <text x="80" y="280" font-family="'Segoe UI', Tahoma, sans-serif" font-size="120" font-weight="800" fill="#ffffff" letter-spacing="12">LOCKSTEP</text>
-  <text x="80" y="340" font-family="'Segoe UI', Tahoma, sans-serif" font-size="36" font-weight="400" fill="#aaaadd">March to the beat</text>
-  <text x="80" y="510" font-family="'Segoe UI', Tahoma, sans-serif" font-size="22" font-weight="500" fill="#8888cc" letter-spacing="2">RHYTHM GAME · DESKTOP · BY MICHAEL PYON</text>
-  <g transform="translate(900, 280)" font-family="monospace" font-size="80" fill="#6b8eff">
-    <text x="0" y="0">♪</text>
-    <text x="80" y="0" opacity="0.6">♪</text>
-    <text x="160" y="0" opacity="0.3">♪</text>
+
+  <rect width="820" height="630" fill="#26245f"/>
+  <rect x="820" width="380" height="630" fill="#bd2e53"/>
+  <rect x="804" width="16" height="630" fill="#f4d35e"/>
+
+  <text x="72" y="82" fill="#f4d35e" font-family="Outfit, Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="5">128 BPM / 138 BEATS</text>
+  <text x="64" y="262" fill="#f7f2df" font-family="Outfit, Arial Black, sans-serif" font-size="158" font-weight="900" letter-spacing="-12">LOCKSTEP</text>
+  <text x="72" y="324" fill="#d9d7ef" font-family="Outfit, Arial, sans-serif" font-size="36" font-weight="600">1 key. Don't lose the switch.</text>
+
+  <g transform="translate(70 402)" fill="#111326">
+    <use href="#marcher" x="0" width="88" height="132"/>
+    <use href="#marcher" x="118" width="88" height="132" transform="translate(0 -13)"/>
+    <use href="#marcher" x="236" width="88" height="132"/>
+    <use href="#marcher" x="354" width="88" height="132" transform="translate(0 -13)"/>
+    <use href="#marcher" x="472" width="88" height="132"/>
   </g>
+  <g transform="translate(70 402)" fill="#f4d35e">
+    <use href="#marcher" x="236" width="88" height="132"/>
+  </g>
+  <rect x="70" y="560" width="620" height="9" fill="#f7f2df"/>
+  <rect x="70" y="584" width="620" height="4" fill="#8d8bb8"/>
+
+  <text x="872" y="90" fill="#f7f2df" font-family="Outfit, Arial, sans-serif" font-size="20" font-weight="800" letter-spacing="5">ON-BEAT</text>
+  <path d="M874 126h190v12H874zM874 154h120v12H874z" fill="#f4d35e"/>
+  <text x="872" y="378" fill="#f7f2df" font-family="Outfit, Arial Black, sans-serif" font-size="70" font-weight="900">SWITCH</text>
+  <text x="872" y="421" fill="#ffd2dc" font-family="Outfit, Arial, sans-serif" font-size="23" font-weight="700">TO THE OFF-BEAT</text>
+  <text x="872" y="558" fill="#f7f2df" font-family="Outfit, Arial, sans-serif" font-size="18" font-weight="700" letter-spacing="3">BY MICHAEL PYON</text>
 </svg>

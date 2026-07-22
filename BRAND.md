@@ -4,7 +4,7 @@
 
 **"The evil marching minigame from Rhythm Heaven, in a browser tab. Press Space. Don't lose the beat when it switches."**
 
-Secondary line for meta/descriptions: "A 3 minute on-beat/off-beat skill check. 1 key, 138 beats, no mercy."
+Secondary line for meta/descriptions: "A 1 minute on-beat/off-beat skill check. 1 key, 138 beats, no mercy."
 
 ## Palette direction
 

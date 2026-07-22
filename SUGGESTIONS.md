@@ -2,7 +2,7 @@
 
 ## Evangelist
 
-The ideal evangelist is a Rhythm Heaven fan in their 20s-30s who hangs out in r/rhythmgames or the Rhythm Heaven Discord, has no Switch nearby at work, and can fire up a browser game for 3 minutes. They are using osu! or Beat Saber but miss the absurd toy-game charm of Rhythm Heaven. What makes them screenshot it: landing a "SUPERB!" run and sharing "SUPERB! on Lockstep: 8420 pts, 14x combo. Beat my score: [link]" in the #scores channel. What makes them bounce in 5 seconds: if there is no audio on the first spacebar press (AudioContext not initialized), if the beat indicator feels off from the metronome, or if the game silently does nothing (mobile).
+The ideal evangelist is a Rhythm Heaven fan in their 20s-30s who hangs out in r/rhythmgames or the Rhythm Heaven Discord, has no Switch nearby at work, and can fire up a browser game for 1 minute. They are using osu! or Beat Saber but miss the absurd toy-game charm of Rhythm Heaven. What makes them screenshot it: landing a "SUPERB!" run and sharing "SUPERB! on Lockstep: 8420 pts, 14x combo. Beat my score: [link]" in the #scores channel. What makes them bounce in 5 seconds: if there is no audio on the first spacebar press (AudioContext not initialized), if the beat indicator feels off from the metronome, or if the game silently does nothing (mobile).
 
 ---
 

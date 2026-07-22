@@ -8,7 +8,7 @@ She is 1 specific person, not "rhythm gamers": the DS-era Rhythm Heaven nostalgi
 
 ## The job she hires Lockstep for
 
-"Give me a 3 minute rhythm toy I can open in a browser tab between meetings that actually tests my internal clock, and give me a number I can rub in my friends' faces." The job is a coffee-break skill check with a bragging artifact at the end. Not practice, not progression, not an account. Open tab, march, screenshot, close tab.
+"Give me a 1 minute rhythm toy I can open in a browser tab between meetings that actually tests my internal clock, and give me a number I can rub in my friends' faces." The job is a coffee-break skill check with a bragging artifact at the end. Not practice, not progression, not an account. Open tab, march, screenshot, close tab.
 
 ## Where she hangs out online
 
