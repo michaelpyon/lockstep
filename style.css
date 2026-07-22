@@ -15,6 +15,10 @@ body {
     align-items: center;
 }
 
+button {
+    touch-action: manipulation;
+}
+
 #game-container {
     width: 800px;
     height: 600px;
