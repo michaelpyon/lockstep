@@ -155,6 +155,8 @@ class Game {
         this.npcSide = 0;     // alternates 0/1 for left/right
         this.playerSide = 0;
         this.lastProcessedBeat = -1;
+        this.npcStepTimer = null;  // pending off-beat step for the formation
+        this.npcStepLog = [];      // recent step positions, read by tools/qa
 
         // Expected hits the player needs to match
         this.expectedHits = [];
@@ -339,6 +341,8 @@ class Game {
         this.lastProcessedBeat = -1;
         this.expectedHits = [];
         this.scheduledUpTo = -1;
+        this.npcStepLog = [];
+        this.clearNpcStepTimer();
 
         this.scoreEl.textContent = '0';
         this.comboEl.textContent = '0';
@@ -421,8 +425,9 @@ class Game {
             // Bass
             this.audio.bass(t, modeAtBeat === 'on');
 
-            // NPC step sound on every beat
-            this.audio.step(t);
+            // NPC footfall lands with the line: on the beat in on-beat mode,
+            // on the off-beat once the line has switched.
+            this.audio.step(modeAtBeat === 'on' ? t : t + this.halfBeat);
 
             // In off-beat mode, also tick on the off-beat
             if (modeAtBeat === 'off') {
@@ -522,13 +527,58 @@ class Game {
             }, 117);
         }
 
-        // NPC marchers step on every beat
-        this.animateNpcStep();
+        // The line steps on the beat the player has to match. In on-beat mode
+        // that is the downbeat; once the line switches, it is the off-beat
+        // halfway between downbeats, which is where expectedHits sits too.
+        // Stepping on the downbeat during an off-beat section put the whole
+        // formation half a beat away from the input it was asking for.
+        this.scheduleNpcStep(beat, mode);
+    }
+
+    // Fire the formation's step for `beat`, delayed to the off-beat when the
+    // line is marching off-beat. The delay is measured against the audio clock
+    // rather than a fixed interval so it stays aligned if a frame is late.
+    scheduleNpcStep(beat, mode) {
+        this.clearNpcStepTimer();
+
+        if (mode === 'on') {
+            this.animateNpcStep();
+            return;
+        }
+
+        const stepTime = this.songStart + beat * this.beatDur + this.halfBeat;
+        const delayMs = Math.max(0, (stepTime - this.audio.now) * 1000);
+
+        this.npcStepTimer = setTimeout(() => {
+            this.npcStepTimer = null;
+            // The section can end during the half beat; a stale step would put
+            // the formation back out of sync with the new mode.
+            if (this.state === 'playing' && this.mode === 'off') {
+                this.animateNpcStep();
+            }
+        }, delayMs);
+    }
+
+    clearNpcStepTimer() {
+        if (this.npcStepTimer) {
+            clearTimeout(this.npcStepTimer);
+            this.npcStepTimer = null;
+        }
+    }
+
+    // Record where each formation step landed on the beat grid. Read by the
+    // browser regression in tools/qa; bounded so a full song cannot grow it.
+    recordNpcStep() {
+        if (this.state !== 'playing') return;
+        const beatFloat = (this.audio.now - this.songStart) / this.beatDur;
+        this.npcStepLog.push({ beatFloat, mode: this.mode });
+        if (this.npcStepLog.length > 96) this.npcStepLog.shift();
     }
 
     animateNpcStep() {
         const side = this.npcSide % 2 === 0 ? 'step-left' : 'step-right';
         this.npcSide++;
+        this.recordNpcStep();
 
         this.npcEls.forEach(m => {
             m.classList.remove('step-left', 'step-right', 'idle');
@@ -662,6 +712,7 @@ class Game {
     endSong() {
         this.state = 'results';
         if (this.animId) cancelAnimationFrame(this.animId);
+        this.clearNpcStepTimer();
 
         document.getElementById('game-screen').classList.add('hidden');
         document.getElementById('results-screen').classList.remove('hidden');
@@ -799,6 +850,20 @@ class Game {
 
 // ============================================================
 const game = new Game();
+
+// Read-only telemetry for the browser regressions in tools/qa. No controls are
+// exposed; a scenario can observe timing but cannot drive or score the game.
+window.__LOCKSTEP = {
+    version: 1,
+    get state() { return game.state; },
+    get mode() { return game.mode; },
+    get beatDur() { return game.beatDur; },
+    get beatFloat() {
+        return game.songStart ? (game.audio.now - game.songStart) / game.beatDur : 0;
+    },
+    get npcSteps() { return game.npcStepLog.slice(); },
+    get expectedHitBeats() { return game.expectedHits.map(h => h.beat); },
+};
 
 // Challenge link: parse ?challenge=N on load and show target on start screen
 (function () {
